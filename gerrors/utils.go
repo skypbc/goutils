@@ -248,7 +248,15 @@ func LastErrorWithFunc[T error](err error, fn func(T) bool) (T, bool) {
 
 func Contains(err error, code Code) bool {
 	_, ok := FirstErrorWithFunc(err, func(i IError) bool {
-		return i.Code() == code
+		if i.Code() == code {
+			return true
+		}
+		for _, c := range i.Categories() {
+			if c == code {
+				return true
+			}
+		}
+		return false
 	})
 	return ok
 }
