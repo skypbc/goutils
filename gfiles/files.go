@@ -232,8 +232,10 @@ func CopyWithBuffSize(toFile string, fromFile string, buffSize int64, perm ...fs
 	}
 
 	if toStat, err := os.Stat(toFile); err == nil {
-		// При копировании файла на самого себя, просто возвращаем размер файла
-		return toStat.Size(), nil
+		if os.SameFile(fromStat, toStat) {
+			// При копировании файла на самого себя, просто возвращаем размер файла
+			return toStat.Size(), nil
+		}
 	}
 
 	fromFd, err := os.Open(fromFile)
